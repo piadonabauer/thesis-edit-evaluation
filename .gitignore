@@ -8,4 +8,5 @@
 
 .env
 # Ignore env folder
-env/
+**/env/
+

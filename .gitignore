@@ -1,4 +1,7 @@
-# Ignore all checkpoint files
-*.ckpt
 *.pt
+*.ckpt
 *.pth
+
+*.h5
+*.tar.gz
+*.zip

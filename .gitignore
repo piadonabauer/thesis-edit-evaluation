@@ -5,3 +5,7 @@
 *.h5
 *.tar.gz
 *.zip
+
+.env
+# Ignore env folder
+env/

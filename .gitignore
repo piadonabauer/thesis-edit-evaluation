@@ -9,4 +9,5 @@
 .env
 # Ignore env folder
 **/env/
-
+experiments/env
+open_clip/env

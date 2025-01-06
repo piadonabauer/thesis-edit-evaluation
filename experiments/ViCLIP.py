@@ -1,0 +1,271 @@
+import torch
+import torchvision
+from PIL import Image
+import numpy as np
+import open_clip
+import argparse
+import pandas as pd
+import regex as re
+import json
+from scipy import stats
+from skimage.metrics import structural_similarity
+from PIL import Image
+import cv2
+from transformers import AutoModel
+import os
+from .morph import morph_images
+
+def get_text_feat_dict(texts, clip, tokenizer, text_feat_d={}):
+    for t in texts:
+        feat = clip.get_text_features(t, tokenizer, text_feat_d)
+        text_feat_d[t] = feat
+    return text_feat_d
+
+def get_vid_feat(frames, clip):
+    return clip.get_vid_features(frames)
+
+v_mean = np.array([0.485, 0.456, 0.406]).reshape(1,1,3)
+v_std = np.array([0.229, 0.224, 0.225]).reshape(1,1,3)
+
+def normalize(data):
+    return (data/255.0-v_mean)/v_std
+
+def frames2tensor(vid_list, fnum=8, target_size=(224, 224), device=torch.device('cuda')):
+    assert(len(vid_list) >= fnum)
+    step = len(vid_list) // fnum
+    vid_list = vid_list[::step][:fnum]
+    vid_list = [cv2.resize(x[:,:,::-1], target_size) for x in vid_list]
+    vid_tube = [np.expand_dims(normalize(x), axis=(0, 1)) for x in vid_list]
+    vid_tube = np.concatenate(vid_tube, axis=1)
+    vid_tube = np.transpose(vid_tube, (0, 1, 4, 2, 3))
+    vid_tube = torch.from_numpy(vid_tube).to(device, non_blocking=True).float()
+    return vid_tube
+    
+def retrieve_text(frames, 
+                  texts, 
+                  models={'viclip':None, 
+                          'tokenizer':None},
+                  topk=5, 
+                  device=torch.device('cuda')):
+    # clip, tokenizer = get_clip(name, model_cfg['size'], model_cfg['pretrained'], model_cfg['reload'])
+    assert(type(models)==dict and models['viclip'] is not None and models['tokenizer'] is not None)
+    clip, tokenizer = models['viclip'], models['tokenizer']
+    clip = clip.to(device)
+    frames_tensor = frames2tensor(frames, device=device)
+    vid_feat = get_vid_feat(frames_tensor, clip)
+
+    text_feat_d = {}
+    text_feat_d = get_text_feat_dict(texts, clip, tokenizer, text_feat_d)
+    text_feats = [text_feat_d[t] for t in texts]
+    text_feats_tensor = torch.cat(text_feats, 0)
+    
+    #probs, idxs = clip.get_predict_label(vid_feat, text_feats_tensor, top=topk)
+
+    similarity = (vid_feat @ text_feats_tensor.T).item()  
+    return similarity
+
+    #ret_texts = [texts[i] for i in idxs.numpy()[0].tolist()]
+    #return ret_texts, probs.numpy()[0]
+
+def get_path(human_rating):
+    if human_rating==0:
+        return "./open_clip_inference/bad_samples"
+    elif human_rating==1:
+        return "./open_clip_inference/good_samples"
+
+def get_correlation_df_with_columns(df1, df2):
+    merged_df = pd.merge(df1, df2, on=['turn', 'id'], suffixes=('_df1', '_df2'))
+
+    correlation_results = []
+
+    for df1_col in df1.columns:
+        if df1_col in ['turn', 'id']:
+            continue 
+
+        for df2_col in df2.columns:
+            if df2_col in ['turn', 'id']:
+                continue 
+            
+            spearman_corr, spearman_p_value = stats.spearmanr(merged_df[df1_col], merged_df[df2_col])
+            pearson_corr, pearson_p_value = stats.pearsonr(merged_df[df1_col], merged_df[df2_col])
+
+            correlation_results.append({
+                'df1': df1_col,
+                'df2': df2_col,
+                'spearman_corr': spearman_corr,
+                'spearman_p_value': spearman_p_value,
+                'pearson_corr': pearson_corr,
+                'pearson_p_value': pearson_p_value
+            })
+
+    correlation_results_df = pd.DataFrame(correlation_results)
+    return correlation_results_df
+
+def get_correlation_df_categories(df1, df2):
+    merged_df = pd.merge(df1, df2, on=['turn', 'id'], suffixes=('_df1', '_df2'))
+
+    correlation_results = []
+    grouped_df = merged_df.groupby('category')
+
+    for category, group in grouped_df:
+        # Nur Gruppen mit mindestens 2 Einträgen berücksichtigen
+        if len(group) < 2:
+            print(f"Skipping category {category} because it has fewer than 2 entries.")
+            continue
+
+        for df1_col in df1.columns:
+            if df1_col in ['turn', 'id']:
+                continue 
+
+            for df2_col in df2.columns:
+                if df2_col in ['turn', 'id', 'category']:
+                    continue 
+                
+                try:
+                    # Berechnung der Korrelationen nur, wenn mehr als 1 Wert vorhanden ist
+                    spearman_corr, spearman_p_value = stats.spearmanr(group[df1_col], group[df2_col])
+                    pearson_corr, pearson_p_value = stats.pearsonr(group[df1_col], group[df2_col])
+
+                    correlation_results.append({
+                        'category': category,
+                        'df1': df1_col,
+                        'df2': df2_col,
+                        'spearman_corr': spearman_corr,
+                        'spearman_p_value': spearman_p_value,
+                        'pearson_corr': pearson_corr,
+                        'pearson_p_value': pearson_p_value
+                    })
+                except ValueError as e:
+                    print(f"Skipping correlation for {df1_col} and {df2_col} in category {category} due to error: {e}")
+
+    correlation_results_df = pd.DataFrame(correlation_results)
+    return correlation_results_df
+
+
+
+def categorize_instruction(instruction):
+    categories = {
+        "changes": r"\b(make|let|change)\b",
+        "removals": r"\b(remove|get rid of)\b",
+        "replacements": r"\b(replace)\b",
+        "adds": r"\b(add|let there be)\b",
+    }
+    for category, pattern in categories.items():
+        if re.search(pattern, instruction):
+            return category
+    return "unkategorisiert"
+
+
+
+def main(name): #, original_image, edit_image, instruction):
+
+    samples = pd.read_csv("./open_clip_inference/samples.csv", sep=";")
+    pattern = r'(\d+)-output(\d+)'
+    with open('./open_clip_inference/edit_turns.json') as f:
+        turns = json.load(f)
+        
+    model=AutoModel.from_pretrained("OpenGVLab/ViCLIP-B-16-hf",trust_remote_code=True)
+    tokenizer = model.tokenizer
+    model_tokenizer={"viclip":model,"tokenizer":tokenizer}
+    
+    results = []
+    for index,row in samples.iterrows():
+        id = row["id"] 
+        turn = row["turn"]
+
+        path = get_path(row["human_rating_binary"])
+
+        for entry in turns:
+            output = entry["output"]
+            match = re.search(pattern, output)
+
+            if match:
+                found_id = match.group(1) # get id of sample
+                found_turn = match.group(2) # get turn of sample
+
+                if int(found_id) == id and int(found_turn) == turn: # check if turn is within samples
+                    input = entry["input"]
+                    mask = entry["mask"]
+                    instruction = entry["instruction"].lower()
+                    category = categorize_instruction(instruction)  # Neue Kategorie hinzufügen
+                    print(f"Instruktion: {instruction}, Kategorie: {category}")
+    
+                    image_original = cv2.imread(fr'{path}/{input}')
+                    image_edit = cv2.imread(fr'{path}/{output}')
+                    image_mask = cv2.imread(fr'{path}/{mask}')
+                
+                    target_size = (512, 512)
+                    image_original = cv2.resize(image_original, target_size)
+                    image_edit = cv2.resize(image_edit, target_size)
+                    image_mask = cv2.resize(image_mask, target_size)
+                    
+                    #frames = morph_images(image_original, image_edit, 8)
+                    
+                    frames = []
+                    for i in range(8):
+                        alpha = i / (8 - 1)  # Alpha value for blending
+                        morphed_image = cv2.addWeighted(image_original, 1 - alpha, image_edit, alpha, 0)
+                        frames.append(morphed_image)
+                        #output_path = f"frame_{i:03d}.jpg"
+                        #cv2.imwrite(output_path, morphed_image)
+                        #print(f"Saved frame {i}: {output_path}")
+ 
+                    text_candidates = [f"{instruction}"]
+                    similarity = retrieve_text(frames, text_candidates, models=model_tokenizer, topk=1)
+
+                    # print(similarity)
+                    
+                    row = {
+                        "id": id,
+                        "turn": turn,
+                        "viclip_score": similarity,
+                        "category": category  
+                    }
+                    results.append(row)
+    
+    clip_scores = pd.DataFrame(results)
+    # clip_scores.to_csv("trained_clip_scores.csv", index=False) # save CLIP's predictions
+    human_scores = pd.read_csv("./open_clip_inference/human_scores.csv", sep=";")
+    
+    human_scores = human_scores.drop_duplicates()
+    clip_scores = clip_scores.drop_duplicates()
+    
+    #correlation_df = get_correlation_df_with_columns(human_scores, clip_scores)
+    correlation_df = get_correlation_df_categories(human_scores, clip_scores)
+    correlation_df.to_csv(f"./open_clip_inference/correlation_{name}.csv", sep=",")
+ 
+    
+    """ for a single image
+    original_image = preprocess(Image.open(original_image)).unsqueeze(0)
+    edit_image = preprocess(Image.open(edit_image)).unsqueeze(0)
+    
+    with torch.no_grad(), torch.cuda.amp.autocast():
+        image_original = model.encode_image(original_image)
+        image_edit = model.encode_image(edit_image)
+        
+        text = tokenizer(["Add a dolphin"])
+        text_features = model.encode_text(text)
+        
+        image_original /= image_original.norm(dim=-1, keepdim=True)
+        image_edit /= image_edit.norm(dim=-1, keepdim=True)
+        text_features /= text_features.norm(dim=-1, keepdim=True)
+
+    image_features = torch.concatenate([image_original, image_edit], axis=1)
+
+    #text_probs = (100.0 * image_features @ text_features.T).softmax(dim=-1)
+    similarity = (image_features @ text_features.T).item()
+    print(similarity)
+    """
+    
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Load a model with specified checkpoint.')
+    #parser.add_argument('--model', type=str, default='RN101', help='Type of model to load (default: RN101)')
+    #parser.add_argument('--checkpoint', type=str, required=True, help='Path to the checkpoint file')
+    parser.add_argument('--name', type=str, required=True, help='Name of file to save the correlation df')
+
+    #parser.add_argument('--image_original_path', type=str, required=True, help='Path to the original image')
+    #parser.add_argument('--image_edit_path', type=str, required=True, help='Path to the edited image')
+    #parser.add_argument('--instruction', type=str, required=True, help='Path to the instruction')
+
+    args = parser.parse_args()
+    main(args.name)#, args.image_original_path, args.image_edit_path)#, args.instruction) 

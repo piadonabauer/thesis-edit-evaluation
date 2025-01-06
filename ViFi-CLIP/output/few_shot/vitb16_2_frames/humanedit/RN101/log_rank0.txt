@@ -1,0 +1,57 @@
+[2024-12-28 15:26:32 RN101] (main.py 388): INFO working dir: output/few_shot/vitb16_2_frames/humanedit/RN101
+[2024-12-28 15:26:32 RN101] (main.py 392): INFO AUG:
+  COLOR_JITTER: 0.8
+  CUTMIX: 1.0
+  GRAY_SCALE: 0.2
+  LABEL_SMOOTH: 0.1
+  MIXUP: 0.8
+  MIXUP_SWITCH_PROB: 0.5
+BASE: ['']
+DATA:
+  DATASET: humanedit
+  INPUT_SIZE: 224
+  LABEL_LIST: /home/jovyan/BA/Github/HumanEdit/labels.csv
+  NUM_CLASSES: 4534
+  NUM_FRAMES: 2
+  ROOT: /home/jovyan/BA/Github/HumanEdit/videos
+  TRAIN_FILE: /home/jovyan/BA/Github/HumanEdit/train.txt
+  VAL_FILE: /home/jovyan/BA/Github/HumanEdit/test.txt
+LOCAL_RANK: 0
+MODEL:
+  ARCH: RN101
+  DROP_PATH_RATE: 0.0
+  FIX_TEXT: True
+  PRETRAINED: None
+  RESUME: None
+OUTPUT: output/few_shot/vitb16_2_frames/humanedit/RN101
+PRINT_FREQ: 50
+SAVE_FREQ: 5
+SEED: 1024
+TEST:
+  MULTI_VIEW_INFERENCE: False
+  NUM_CLIP: 1
+  NUM_CROP: 1
+  ONLY_TEST: False
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: False
+  BATCH_SIZE: 32
+  EPOCHS: 31
+  LR: 2e-06
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: False
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+TRAINER:
+  ViFi_CLIP:
+    CTX_INIT: a photo of a
+    N_CTX_TEXT: 0
+    N_CTX_VISION: 0
+    PROMPT_DEPTH_TEXT: 1
+    PROMPT_DEPTH_VISION: 0
+    PROMPT_MODEL: False
+    USE: both
+    ZS_EVAL: False
+[2024-12-28 15:26:32 RN101] (vificlip.py 217): INFO Loading CLIP (backbone: RN101)

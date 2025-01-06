@@ -1,0 +1,24 @@
+DATA:
+    ROOT: '/home/jovyan/BA/Github/ViFi-CLIP/datasets_splits/magicbrush_splits/videos'
+    TRAIN_FILE: '/home/jovyan/BA/Github/ViFi-CLIP/datasets_splits/magicbrush_splits/train_int.txt'
+    VAL_FILE: '/home/jovyan/BA/Github/ViFi-CLIP/datasets_splits/magicbrush_splits/test_int.txt'
+    DATASET: magicbrush
+    NUM_FRAMES: 2
+    # 2
+    NUM_CLASSES: 9335
+    LABEL_LIST: '/home/jovyan/BA/Github/ViFi-CLIP/labels/magicbrush_labels.csv'
+MODEL:
+    ARCH: ViT-B/16
+    #ViT-B/32
+    #ViT-B/16
+TRAIN:
+    BATCH_SIZE: 32
+    # BS 64
+    ACCUMULATION_STEPS: 2
+    EPOCHS: 11
+    LR: 2.e-06
+TRAINER:
+  ViFi_CLIP:
+    ZS_EVAL: False # Make True only during test mode to evaluate zero-shot vanilla CLIP performance
+    USE: "both" # both refers to complete fine-tuning of CLIP (text+image encoders)
+SAVE_FREQ: 10

@@ -1,9 +1,0 @@
-;df1;df2;spearman_corr;spearman_p_value;pearson_corr;pearson_p_value
-0;human_rating_binary;clip_score;-0.047;0.6864;-0.059;0.6075
-1;human_alignment_binary;clip_score;0.019;0.8677;0.016;0.8883
-2;human_aesthetics_binary;clip_score;-0.228;0.0465;-0.218;0.0565
-3;human_consistency_binary;clip_score;-0.091;0.433;-0.095;0.409
-4;human_rating_multi;clip_score;-0.04;0.7275;-0.052;0.6522
-5;human_alignment_multi;clip_score;-0.059;0.6093;-0.055;0.6332
-6;human_aesthetics_multi;clip_score;-0.054;0.6411;-0.087;0.452
-7;human_consistency_multi;clip_score;-0.052;0.6515;-0.081;0.4855

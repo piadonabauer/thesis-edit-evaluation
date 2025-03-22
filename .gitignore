@@ -3,19 +3,13 @@
 *.pth
 
 *.h5
+
 *.tar.gz
 *.zip
 
 .env
 **/env/
-experiments/env/
-open_clip/env/
+./.ipynb_checkpoints
 
-apex/
-apex
-
-env
-env/
-
-.ipynb_checkpoints
-/.ipynb_checkpoints
+*/.ipynb_checkpoints
+*/.idea

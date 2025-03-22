@@ -85,7 +85,7 @@ _C.TEST.MULTI_VIEW_INFERENCE = False
 # Misc
 # -----------------------------------------------------------------------------
 _C.OUTPUT = ''
-_C.SAVE_FREQ = 1
+_C.SAVE_FREQ = 11
 _C.VAL_FREQ = 1
 _C.PRINT_FREQ = 50
 _C.SEED = 1024

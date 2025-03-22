@@ -22,7 +22,6 @@ from utils.config import get_config
 from trainers import vificlip
 import json
 
-
 def parse_option():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', '-cfg', required=True, type=str, default='configs/k400/32_8.yaml')
@@ -39,7 +38,7 @@ def parse_option():
     parser.add_argument('--batch-size', type=int)
     parser.add_argument('--accumulation-steps', type=int)
 
-    parser.add_argument("--local_rank", type=int, default=0, help='local rank for DistributedDataParallel')
+    parser.add_argument("--local_rank", type=int, default=0, help='local rank for DistributedDataParallel') # changed: default 0 instead of -1
     args = parser.parse_args()
 
     config = get_config(args)
@@ -49,7 +48,6 @@ def parse_option():
 
 def main(config):
     train_data, val_data, train_loader, val_loader = build_dataloader(logger, config)
-        
     class_names = [class_name for i, class_name in train_data.classes]
 
     # Custom trainer for different variants of ViFi-CLIP
@@ -78,7 +76,7 @@ def main(config):
         model, optimizer = amp.initialize(models=model, optimizers=optimizer, opt_level=config.TRAIN.OPT_LEVEL)
 
     model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[config.LOCAL_RANK], broadcast_buffers=False,
-                                                      find_unused_parameters=True)
+                                                      find_unused_parameters=True) # changed: last para true instead of false
 
     start_epoch, max_accuracy = 0, 0.0
 
@@ -99,7 +97,6 @@ def main(config):
             start_epoch = 0
             max_accuracy = 0
     if config.TEST.ONLY_TEST:
-        #acc1 = validate(val_loader, model, config)
         acc1 = validate(val_loader, model, criterion, config, "Validation")
         logger.info(f"Accuracy of the network on the {len(val_data)} test videos: {acc1:.1f}%")
         return
@@ -108,8 +105,8 @@ def main(config):
         train_loader.sampler.set_epoch(epoch)
         train_one_epoch(epoch, model, criterion, optimizer, lr_scheduler, train_loader, config, mixup_fn)
 
+        #validate(train_loader, model, criterion, config, "Training")
         if epoch % config.VAL_FREQ == 0 or epoch == (config.TRAIN.EPOCHS - 1):
-            validate(train_loader, model, criterion, config, "Training")
             acc1 = validate(val_loader, model, criterion, config, "Validation")
             logger.info(f"Accuracy of the network on the {len(val_data)} test videos: {acc1:.1f}%")
             is_best = acc1 > max_accuracy
@@ -143,7 +140,6 @@ def train_one_epoch(epoch, model, criterion, optimizer, lr_scheduler, train_load
     start = time.time()
     end = time.time()
 
-
     for idx, batch_data in enumerate(train_loader):
 
         images = batch_data["imgs"].cuda(non_blocking=True)
@@ -156,12 +152,6 @@ def train_one_epoch(epoch, model, criterion, optimizer, lr_scheduler, train_load
 
         output = model(images)
 
-        """
-        print(output.shape)
-        print(output)
-        print(label_id.shape)
-        print(label_id)
-        """
         total_loss = criterion(output, label_id)
         total_loss = total_loss / config.TRAIN.ACCUMULATION_STEPS
 
@@ -202,16 +192,18 @@ def train_one_epoch(epoch, model, criterion, optimizer, lr_scheduler, train_load
 
 """
 @torch.no_grad()
-def validate(val_loader, model, criterion, config):
+def validate(val_loader, model, config):
     model.eval()
 
-    acc1_meter, acc5_meter, acc10_meter, acc50_meter = AverageMeter(), AverageMeter(), AverageMeter(), AverageMeter()
+    acc1_meter, acc5_meter = AverageMeter(), AverageMeter()
     with torch.no_grad():
         logger.info(f"{config.TEST.NUM_CLIP * config.TEST.NUM_CROP} views inference")
         for idx, batch_data in enumerate(val_loader):
             _image = batch_data["imgs"]
             label_id = batch_data["label"]
             label_id = label_id.reshape(-1)
+            
+            _image = _image.view((-1, config.DATA.NUM_FRAMES, 3) + _image.size()[-2:]) # changed: added
 
             b, tn, c, h, w = _image.size()
             t = config.DATA.NUM_FRAMES
@@ -234,23 +226,15 @@ def validate(val_loader, model, criterion, config):
 
             values_1, indices_1 = tot_similarity.topk(1, dim=-1)
             values_5, indices_5 = tot_similarity.topk(5, dim=-1)
-            values_10, indices_10 = tot_similarity.topk(10, dim=-1)
-            values_50, indices_50 = tot_similarity.topk(50, dim=-1)
-            acc1, acc5, acc10, acc50 = 0, 0, 0, 0
+            acc1, acc5 = 0, 0
             for i in range(b):
                 if indices_1[i] == label_id[i]:
                     acc1 += 1
                 if label_id[i] in indices_5[i]:
                     acc5 += 1
-                if label_id[i] in indices_10[i]:
-                    acc10 += 1
-                if label_id[i] in indices_50[i]:
-                    acc50 += 1
 
             acc1_meter.update(float(acc1) / b * 100, b)
             acc5_meter.update(float(acc5) / b * 100, b)
-            acc10_meter.update(float(acc10) / b * 100, b)
-            acc50_meter.update(float(acc50) / b * 100, b)
             if idx % config.PRINT_FREQ == 0:
                 logger.info(
                     f'Test: [{idx}/{len(val_loader)}]\t'
@@ -258,159 +242,81 @@ def validate(val_loader, model, criterion, config):
                 )
     acc1_meter.sync()
     acc5_meter.sync()
-    logger.info(f' * Acc@1 {acc1_meter.avg:.3f} Acc@5 {acc5_meter.avg:.3f} Acc@10 {acc10_meter.avg:.3f} Acc@50 {acc50_meter.avg:.3f}')
+    logger.info(f' * Acc@1 {acc1_meter.avg:.3f} Acc@5 {acc5_meter.avg:.3f}')
     return acc1_meter.avg
 """
-
-val_history = {
-    'loss': [],
-    'acc1': [],
-    'acc5': [],
-    'acc10': [],
-    'acc50': [],
-    'macro_precision': [],
-    'macro_recall': [],
-    'macro_f1': [],
-    'micro_precision': [],
-    'micro_recall': [],
-    'micro_f1': [],
-}
-
-train_history = {
-    'loss': [],
-    'acc1': [],
-    'acc5': [],
-    'acc10': [],
-    'acc50': [],
-    'macro_precision': [],
-    'macro_recall': [],
-    'macro_f1': [],
-    'micro_precision': [],
-    'micro_recall': [],
-    'micro_f1': [],
-}
 
 @torch.no_grad()
 def validate(val_loader, model, criterion, config, split):
     model.eval()
-
-    acc1_meter, acc5_meter, acc10_meter, acc50_meter = AverageMeter(), AverageMeter(), AverageMeter(), AverageMeter()
+    
     loss_meter = AverageMeter()
-    tp = torch.zeros(config.DATA.NUM_CLASSES).cuda()
-    fp = torch.zeros(config.DATA.NUM_CLASSES).cuda()
-    fn = torch.zeros(config.DATA.NUM_CLASSES).cuda()
-
+    ranks = []
+    recall_k = {1: 0, 5: 0, 10: 0, 50: 0}
+    total_samples = 0
+    
     logger.info(f"{config.TEST.NUM_CLIP * config.TEST.NUM_CROP} views inference")
-
+    
     for idx, batch_data in enumerate(val_loader):
         _image = batch_data["imgs"]
-        label_id = batch_data["label"]
-        label_id = label_id.reshape(-1)
+        label_id = batch_data["label"].reshape(-1).cuda(non_blocking=True)
         
         _image = _image.view((-1, config.DATA.NUM_FRAMES, 3) + _image.size()[-2:])
-        
-        #if mixup_fn is not None:
-            #_image, label_id = mixup_fn(_image, label_id)
-
         b, tn, c, h, w = _image.size()
         t = config.DATA.NUM_FRAMES
         n = tn // t
         _image = _image.view(b, n, t, c, h, w)
-
+        
         tot_similarity = torch.zeros((b, config.DATA.NUM_CLASSES)).cuda()
         for i in range(n):
-            image = _image[:, i, :, :, :, :]
-            label_id = label_id.cuda(non_blocking=True)
-            image_input = image.cuda(non_blocking=True)
-
+            image_input = _image[:, i, :, :, :, :].cuda(non_blocking=True)
             if config.TRAIN.OPT_LEVEL == 'O2':
                 image_input = image_input.half()
-
             output = model(image_input)
-            similarity = output.view(b, -1).softmax(dim=-1)
-            tot_similarity += similarity
-
-        # Calculate predictions
-        values_1, indices_1 = tot_similarity.topk(1, dim=-1)
-        values_5, indices_5 = tot_similarity.topk(5, dim=-1)
-        values_10, indices_10 = tot_similarity.topk(10, dim=-1)
-        values_50, indices_50 = tot_similarity.topk(50, dim=-1)
-
-        # Calculate loss
-        label_id_batch = torch.full((b, 4534), 0.1 / 4534)
-        label_id_batch = label_id_batch.cuda(non_blocking=True)
-        label_id_batch.scatter_(1, label_id.unsqueeze(1), 1 - 0.1)
+            tot_similarity += output.view(b, -1).softmax(dim=-1)
         
+        sorted_indices = torch.argsort(tot_similarity, dim=-1, descending=True)
+        
+        for i in range(b):
+            true_rank = (sorted_indices[i] == label_id[i]).nonzero(as_tuple=True)[0].item()
+            ranks.append(true_rank + 1)  # Convert 0-based index to 1-based rank
+            
+            for k in [1, 5, 10, 50]:
+                if true_rank < k:
+                    recall_k[k] += 1
+        
+        label_id_batch = torch.full((b, config.DATA.NUM_CLASSES), 0.1 / config.DATA.NUM_CLASSES).cuda(non_blocking=True)
+        label_id_batch.scatter_(1, label_id.unsqueeze(1), 1 - 0.1)
         loss = criterion(tot_similarity, label_id_batch)
         loss_meter.update(loss.item(), b)
-
-        acc1, acc5, acc10, acc50 = 0, 0, 0, 0
-        acc1 = 0
-        for i in range(b):
-            if indices_1[i] == label_id[i].item():
-                acc1 += 1
-            if label_id[i] in indices_5[i]:
-                acc5 += 1
-            if label_id[i] in indices_10[i]:
-                acc10 += 1
-            if label_id[i] in indices_50[i]:
-                acc50 += 1
-            
-        acc1_meter.update(float(acc1) / b * 100, b)
-        acc5_meter.update(float(acc5) / b * 100, b)
-        acc10_meter.update(float(acc10) / b * 100, b)
-        acc50_meter.update(float(acc50) / b * 100, b)
         
-        for i in range(b):
-            pred = indices_1[i].item()
-            true = label_id[i].item()
-            #true = label_id[i].argmax().item()
-
-            if pred == true:
-                tp[true] += 1  # True Positive
-            else:
-                fp[pred] += 1  # False Positive
-                fn[true] += 1  # False Negative
-
-    # Precision, Recall, F1
-    precision = tp / (tp + fp + 1e-8)
-    recall = tp / (tp + fn + 1e-8)
-    f1_score = 2 * (precision * recall) / (precision + recall + 1e-8)
-
-    macro_precision = precision.mean().item()
-    macro_recall = recall.mean().item()
-    macro_f1 = f1_score.mean().item()
-
-    micro_precision = tp.sum() / (tp.sum() + fp.sum() + 1e-8)
-    micro_recall = tp.sum() / (tp.sum() + fn.sum() + 1e-8)
-    micro_f1 = 2 * (micro_precision * micro_recall) / (micro_precision + micro_recall + 1e-8)
-
-    acc1_meter.sync()
-    logger.info(f'{split} Loss: {loss_meter.avg:.4f}')
-    logger.info(f' * Acc@1 {acc1_meter.avg:.3f} Acc@5 {acc5_meter.avg:.3f} Acc@10 {acc10_meter.avg:.3f} Acc@50 {acc50_meter.avg:.3f}')
-    logger.info(f' * Macro P: {macro_precision:.3f}, R: {macro_recall:.3f}, F1: {macro_f1:.3f}')
-    logger.info(f' * Micro P: {micro_precision:.3f}, R: {micro_recall:.3f}, F1: {micro_f1:.3f}')
+        total_samples += b
     
-    if split == "Training":
-        history = train_history
-    elif split == "Validation":
-        history = val_history
-        
-    if history is not None:
-        history[f'loss'].append(loss_meter.avg)
-        history['acc1'].append(acc1_meter.avg)
-        history['acc5'].append(acc5_meter.avg)
-        history['acc10'].append(acc10_meter.avg)
-        history['acc50'].append(acc50_meter.avg)
-        history['macro_precision'].append(macro_precision)
-        history['macro_recall'].append(macro_recall)
-        history['macro_f1'].append(macro_f1)
-        history['micro_precision'].append(micro_precision)
-        history['micro_recall'].append(micro_recall)
-        history['micro_f1'].append(micro_f1)
+    mean_rank = sum(ranks) / len(ranks)
+    median_rank = sorted(ranks)[len(ranks) // 2]
+    recall_k = {k: (v / total_samples) * 100 for k, v in recall_k.items()}
+    
+    logger.info(split)
+    logger.info(f' * Loss: {loss_meter.avg:.4f}')
+    logger.info(f' * Mean Rank: {mean_rank:.3f}, Median Rank: {median_rank:.3f}')
+    logger.info(f' * Recall@1: {recall_k[1]:.3f}, Recall@5: {recall_k[5]:.3f}, Recall@10: {recall_k[10]:.3f}, Recall@50: {recall_k[50]:.3f}')
+    
+    history[split]['loss'].append(loss_meter.avg)
+    history[split]['mean_rank'].append(mean_rank)
+    history[split]['median_rank'].append(median_rank)
+    history[split]['recall@1'].append(recall_k[1])
+    history[split]['recall@5'].append(recall_k[5])
+    history[split]['recall@10'].append(recall_k[10])
+    history[split]['recall@50'].append(recall_k[50])
+    
+    return recall_k[1]
 
-    return acc1_meter.avg
-
+history =  {
+    'Training': {'loss': [], 'mean_rank': [], 'median_rank': [], 
+                 'recall@1': [], 'recall@5': [], 'recall@10': [], 'recall@50': []},
+    'Validation': {'loss': [], 'mean_rank': [], 'median_rank': [],
+                   'recall@1': [], 'recall@5': [], 'recall@10': [], 'recall@50': []}
+}
 
 if __name__ == '__main__':
     # prepare config
@@ -424,7 +330,6 @@ if __name__ == '__main__':
     else:
         rank = -1
         world_size = -1
-
     torch.cuda.set_device(args.local_rank)
     torch.distributed.init_process_group(backend='nccl', init_method='env://', world_size=world_size, rank=rank)
     torch.distributed.barrier(device_ids=[args.local_rank])
@@ -439,7 +344,7 @@ if __name__ == '__main__':
     Path(config.OUTPUT).mkdir(parents=True, exist_ok=True)
 
     # logger
-    logger = create_logger(output_dir=config.OUTPUT, dist_rank=0, name=f"{config.MODEL.ARCH}")
+    logger = create_logger(output_dir=config.OUTPUT, dist_rank=dist.get_rank(), name=f"{config.MODEL.ARCH}")
     logger.info(f"working dir: {config.OUTPUT}")
 
     # save config 
@@ -449,7 +354,5 @@ if __name__ == '__main__':
 
     main(config)
     
-    with open(f'{config.OUTPUT}/val_history.json', 'w') as f:
-        json.dump(val_history, f)
-    with open(f'{config.OUTPUT}/train_history.json', 'w') as f:
-        json.dump(train_history, f)
+    with open(f'{config.OUTPUT}/history.json', 'w') as f:
+        json.dump(history, f)

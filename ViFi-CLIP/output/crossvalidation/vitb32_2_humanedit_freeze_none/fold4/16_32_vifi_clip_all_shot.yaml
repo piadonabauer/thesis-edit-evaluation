@@ -1,0 +1,22 @@
+DATA:
+    ROOT: '/home/jovyan/BA/Github/HumanEdit/videos'
+    TRAIN_FILE: '/home/jovyan/BA/Github/thesis-edit-evaluation/data/humanedit/5f_cv/train_fold_4.txt'
+    VAL_FILE: '/home/jovyan/BA/Github/thesis-edit-evaluation/data/humanedit/5f_cv/test_fold_4.txt'
+    DATASET: humanedit
+    NUM_FRAMES: 2
+    NUM_CLASSES: 4534 #5751
+    LABEL_LIST: '/home/jovyan/BA/Github/HumanEdit/labels.csv'
+MODEL:
+    ARCH: ViT-B/32
+    #ViT-B/32
+TRAIN:
+    BATCH_SIZE: 16
+    # BS 64
+    ACCUMULATION_STEPS: 2
+    EPOCHS: 11
+    LR: 2.e-06
+TRAINER:
+  ViFi_CLIP:
+    ZS_EVAL: False # Make True only during test mode to evaluate zero-shot vanilla CLIP performance
+    USE: "both" # both refers to complete fine-tuning of CLIP (text+image encoders)
+SAVE_FREQ: 10

@@ -197,7 +197,6 @@ class VideoDataset(BaseDataset):
                     filename, label = line_split[0], line_split[1:]
                     label = list(map(int, label))
                 else:
-                    #print(line_split)
                     filename, label = line_split
                     label = int(label)
                 if self.data_prefix is not None:

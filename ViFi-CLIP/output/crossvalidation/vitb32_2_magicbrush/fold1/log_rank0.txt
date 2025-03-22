@@ -1,0 +1,66 @@
+[2025-03-12 16:43:56 ViT-B/32] (main.py 348): INFO working dir: output/crossvalidation/vitb32_2_magicbrush/fold1
+[2025-03-12 16:43:56 ViT-B/32] (main.py 352): INFO AUG:
+  COLOR_JITTER: 0.8
+  CUTMIX: 1.0
+  GRAY_SCALE: 0.2
+  LABEL_SMOOTH: 0.1
+  MIXUP: 0.8
+  MIXUP_SWITCH_PROB: 0.5
+BASE: ['']
+DATA:
+  DATASET: magicbrush
+  INPUT_SIZE: 224
+  LABEL_LIST: /home/jovyan/BA/Github/thesis-edit-evaluation/data/magicbrush/labels.csv
+  NUM_CLASSES: 9335
+  NUM_FRAMES: 2
+  ROOT: /home/jovyan/BA/Github/MagicBrush/vifi_format/videos
+  TRAIN_FILE: /home/jovyan/BA/Github/thesis-edit-evaluation/data/magicbrush/5f_cv/train_fold_1.txt
+  VAL_FILE: /home/jovyan/BA/Github/thesis-edit-evaluation/data/magicbrush/5f_cv/test_fold_1.txt
+LOCAL_RANK: 0
+MODEL:
+  ARCH: ViT-B/32
+  DROP_PATH_RATE: 0.0
+  FIX_TEXT: True
+  PRETRAINED: None
+  RESUME: None
+OUTPUT: output/crossvalidation/vitb32_2_magicbrush/fold1
+PRINT_FREQ: 50
+SAVE_FREQ: 10
+SEED: 1024
+TEST:
+  MULTI_VIEW_INFERENCE: False
+  NUM_CLIP: 1
+  NUM_CROP: 1
+  ONLY_TEST: False
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: False
+  BATCH_SIZE: 16
+  EPOCHS: 11
+  LR: 2e-06
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: False
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+TRAINER:
+  ViFi_CLIP:
+    CTX_INIT: a photo of a
+    N_CTX_TEXT: 0
+    N_CTX_VISION: 0
+    PROMPT_DEPTH_TEXT: 1
+    PROMPT_DEPTH_VISION: 0
+    PROMPT_MODEL: False
+    USE: both
+    ZS_EVAL: False
+VAL_FREQ: 1
+[2025-03-12 16:43:56 ViT-B/32] (vificlip.py 242): INFO Loading CLIP (backbone: ViT-B/32)
+[2025-03-12 16:43:58 ViT-B/32] (vificlip.py 245): INFO Building ViFi-CLIP CLIP
+[2025-03-12 16:43:59 ViT-B/32] (vificlip.py 262): INFO Turning on gradients for COMPLETE ViFi-CLIP model
+[2025-03-12 16:43:59 ViT-B/32] (vificlip.py 286): INFO Total learnable items: 302
+[2025-03-12 16:44:05 ViT-B/32] (main.py 184): INFO Train: [0/11][0/440]	eta 0:35:39 lr 0.000000000	time 4.8621 (4.8621)	tot_loss 5.0158 (5.0158)	mem 4202MB
+[2025-03-12 16:47:19 ViT-B/32] (main.py 184): INFO Train: [0/11][50/440]	eta 0:25:24 lr 0.000000045	time 4.0213 (3.9078)	tot_loss 4.7697 (4.6397)	mem 5231MB
+[2025-03-12 16:50:41 ViT-B/32] (main.py 184): INFO Train: [0/11][100/440]	eta 0:22:29 lr 0.000000090	time 4.0082 (3.9683)	tot_loss 4.7717 (4.6981)	mem 5231MB
+[2025-03-12 16:54:01 ViT-B/32] (main.py 184): INFO Train: [0/11][150/440]	eta 0:19:15 lr 0.000000135	time 4.0004 (3.9840)	tot_loss 5.1524 (4.6967)	mem 5231MB
+[2025-03-12 16:57:22 ViT-B/32] (main.py 184): INFO Train: [0/11][200/440]	eta 0:15:57 lr 0.000000181	time 4.0074 (3.9907)	tot_loss 4.5254 (4.6780)	mem 5233MB

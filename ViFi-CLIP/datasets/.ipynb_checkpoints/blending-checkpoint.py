@@ -116,10 +116,10 @@ class CutmixBlending(BaseMiniBatchBlending):
         cx = torch.randint(w, (1, ))[0]
         cy = torch.randint(h, (1, ))[0]
 
-        bbx1 = torch.clamp(cx - cut_w // 2, 0, w)
-        bby1 = torch.clamp(cy - cut_h // 2, 0, h)
-        bbx2 = torch.clamp(cx + cut_w // 2, 0, w)
-        bby2 = torch.clamp(cy + cut_h // 2, 0, h)
+        bbx1 = torch.clamp(torch.div(cx - cut_w, 2, rounding_mode='trunc'), 0, w)
+        bby1 = torch.clamp(torch.div(cy - cut_h, 2, rounding_mode='trunc'), 0, h)
+        bbx2 = torch.clamp(torch.div(cx + cut_w, 2, rounding_mode='trunc'), 0, w)
+        bby2 = torch.clamp(torch.div(cy + cut_h, 2, rounding_mode='trunc'), 0, h)
 
         return bbx1, bby1, bbx2, bby2
 
@@ -156,7 +156,6 @@ class CutmixMixupBlending(BaseMiniBatchBlending):
 
     @staticmethod
     def rand_bbox(img_size, lam):
-        print("rand_bbox")
         """Generate a random boudning box."""
         w = img_size[-1]
         h = img_size[-2]
@@ -168,15 +167,14 @@ class CutmixMixupBlending(BaseMiniBatchBlending):
         cx = torch.randint(w, (1, ))[0]
         cy = torch.randint(h, (1, ))[0]
 
-        bbx1 = torch.clamp(cx - cut_w // 2, 0, w)
-        bby1 = torch.clamp(cy - cut_h // 2, 0, h)
-        bbx2 = torch.clamp(cx + cut_w // 2, 0, w)
-        bby2 = torch.clamp(cy + cut_h // 2, 0, h)
+        bbx1 = torch.clamp(torch.div(cx - cut_w, 2, rounding_mode='trunc'), 0, w)
+        bby1 = torch.clamp(torch.div(cy - cut_h, 2, rounding_mode='trunc'), 0, h)
+        bbx2 = torch.clamp(torch.div(cx + cut_w, 2, rounding_mode='trunc'), 0, w)
+        bby2 = torch.clamp(torch.div(cy + cut_h, 2, rounding_mode='trunc'), 0, h)
 
         return bbx1, bby1, bbx2, bby2
 
     def do_cutmix(self, imgs, label, **kwargs):
-        print("do_cutmix")
         """Blending images with cutmix."""
         assert len(kwargs) == 0, f'unexpected kwargs for cutmix {kwargs}'
 
@@ -194,7 +192,6 @@ class CutmixMixupBlending(BaseMiniBatchBlending):
         return imgs, label
 
     def do_mixup(self, imgs, label, **kwargs):
-        print("do_mixup")
         """Blending images with mixup."""
         assert len(kwargs) == 0, f'unexpected kwargs for mixup {kwargs}'
 
@@ -208,7 +205,6 @@ class CutmixMixupBlending(BaseMiniBatchBlending):
         return mixed_imgs, mixed_label
 
     def do_blending(self, imgs, label, **kwargs):
-        print("do_blending")
         """Blending images with MViT style. Cutmix for half for mixup for the other half."""
         assert len(kwargs) == 0, f'unexpected kwargs for cutmix_half_mixup {kwargs}'
 

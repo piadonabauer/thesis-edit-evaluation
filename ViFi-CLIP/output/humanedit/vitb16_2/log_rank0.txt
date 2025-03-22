@@ -1,0 +1,246 @@
+[2025-02-21 19:26:36 ViT-B/16] (main.py 275): INFO working dir: output/humanedit/vitb16_2
+[2025-02-21 19:26:36 ViT-B/16] (main.py 279): INFO AUG:
+  COLOR_JITTER: 0.8
+  CUTMIX: 1.0
+  GRAY_SCALE: 0.2
+  LABEL_SMOOTH: 0.1
+  MIXUP: 0.8
+  MIXUP_SWITCH_PROB: 0.5
+BASE: ['']
+DATA:
+  DATASET: humanedit
+  INPUT_SIZE: 224
+  LABEL_LIST: /home/jovyan/BA/Github/thesis-edit-evaluation/data/humanedit/labels.csv
+  NUM_CLASSES: 4534
+  NUM_FRAMES: 2
+  ROOT: /home/jovyan/BA/Github/HumanEdit/videos
+  TRAIN_FILE: /home/jovyan/BA/Github/thesis-edit-evaluation/data/humanedit/train.txt
+  VAL_FILE: /home/jovyan/BA/Github/thesis-edit-evaluation/data/humanedit/test.txt
+LOCAL_RANK: 0
+MODEL:
+  ARCH: ViT-B/16
+  DROP_PATH_RATE: 0.0
+  FIX_TEXT: True
+  PRETRAINED: None
+  RESUME: None
+OUTPUT: output/humanedit/vitb16_2
+PRINT_FREQ: 50
+SAVE_FREQ: 5
+SEED: 1024
+TEST:
+  MULTI_VIEW_INFERENCE: False
+  NUM_CLIP: 1
+  NUM_CROP: 1
+  ONLY_TEST: False
+TRAIN:
+  ACCUMULATION_STEPS: 2
+  AUTO_RESUME: False
+  BATCH_SIZE: 16
+  EPOCHS: 16
+  LR: 2e-06
+  LR_SCHEDULER: cosine
+  OPTIMIZER: adamw
+  OPT_LEVEL: O1
+  USE_CHECKPOINT: False
+  WARMUP_EPOCHS: 5
+  WEIGHT_DECAY: 0.001
+TRAINER:
+  ViFi_CLIP:
+    CTX_INIT: a photo of a
+    N_CTX_TEXT: 0
+    N_CTX_VISION: 0
+    PROMPT_DEPTH_TEXT: 1
+    PROMPT_DEPTH_VISION: 0
+    PROMPT_MODEL: False
+    USE: both
+    ZS_EVAL: False
+[2025-02-21 19:26:36 ViT-B/16] (vificlip.py 215): INFO Loading CLIP (backbone: ViT-B/16)
+[2025-02-21 19:26:37 ViT-B/16] (vificlip.py 218): INFO Building ViFi-CLIP CLIP
+[2025-02-21 19:26:38 ViT-B/16] (vificlip.py 235): INFO Turning on gradients for COMPLETE ViFi-CLIP model
+[2025-02-21 19:26:38 ViT-B/16] (vificlip.py 259): INFO Total learnable items: 301
+[2025-02-21 19:26:41 ViT-B/16] (main.py 183): INFO Train: [0/16][0/300]	eta 0:16:33 lr 0.000000000	time 3.3106 (3.3106)	tot_loss 4.6000 (4.6000)	mem 6688MB
+[2025-02-21 19:26:51 ViT-B/16] (main.py 183): INFO Train: [0/16][50/300]	eta 0:01:04 lr 0.000000065	time 0.1870 (0.2575)	tot_loss 4.1161 (3.9785)	mem 7112MB
+[2025-02-21 19:27:01 ViT-B/16] (main.py 183): INFO Train: [0/16][100/300]	eta 0:00:45 lr 0.000000132	time 0.1924 (0.2288)	tot_loss 4.0341 (3.9560)	mem 7112MB
+[2025-02-21 19:27:11 ViT-B/16] (main.py 183): INFO Train: [0/16][150/300]	eta 0:00:32 lr 0.000000199	time 0.1940 (0.2196)	tot_loss 3.0250 (3.9525)	mem 7114MB
+[2025-02-21 19:27:21 ViT-B/16] (main.py 183): INFO Train: [0/16][200/300]	eta 0:00:21 lr 0.000000265	time 0.1948 (0.2152)	tot_loss 4.0641 (3.9563)	mem 7114MB
+[2025-02-21 19:27:32 ViT-B/16] (main.py 183): INFO Train: [0/16][250/300]	eta 0:00:10 lr 0.000000332	time 0.1951 (0.2130)	tot_loss 4.0699 (3.9508)	mem 7114MB
+[2025-02-21 19:27:42 ViT-B/16] (main.py 190): INFO EPOCH 0 training takes 0:01:03
+[2025-02-21 19:27:42 ViT-B/16] (main.py 199): INFO 1 views inference
+[2025-02-21 19:27:43 ViT-B/16] (main.py 238): INFO Test: [0/564]	Acc@1: 0.000	
+[2025-02-21 19:27:43 ViT-B/16] (main.py 238): INFO Test: [50/564]	Acc@1: 6.863	
+[2025-02-21 19:27:44 ViT-B/16] (main.py 238): INFO Test: [100/564]	Acc@1: 6.436	
+[2025-02-21 19:27:44 ViT-B/16] (main.py 238): INFO Test: [150/564]	Acc@1: 5.960	
+[2025-02-21 19:27:45 ViT-B/16] (main.py 238): INFO Test: [200/564]	Acc@1: 6.965	
+[2025-02-21 19:27:45 ViT-B/16] (main.py 238): INFO Test: [250/564]	Acc@1: 6.375	
+[2025-02-21 19:27:46 ViT-B/16] (main.py 238): INFO Test: [300/564]	Acc@1: 6.146	
+[2025-02-21 19:27:46 ViT-B/16] (main.py 238): INFO Test: [350/564]	Acc@1: 5.556	
+[2025-02-21 19:27:47 ViT-B/16] (main.py 238): INFO Test: [400/564]	Acc@1: 5.736	
+[2025-02-21 19:27:47 ViT-B/16] (main.py 238): INFO Test: [450/564]	Acc@1: 5.432	
+[2025-02-21 19:27:48 ViT-B/16] (main.py 238): INFO Test: [500/564]	Acc@1: 5.389	
+[2025-02-21 19:27:49 ViT-B/16] (main.py 238): INFO Test: [550/564]	Acc@1: 5.626	
+[2025-02-21 19:27:49 ViT-B/16] (main.py 244): INFO  * Acc@1 5.585 Acc@5 17.642
+[2025-02-21 19:27:49 ViT-B/16] (main.py 110): INFO Accuracy of the network on the 1128 test videos: 5.6%
+[2025-02-21 19:27:49 ViT-B/16] (main.py 113): INFO Max accuracy: 5.59%
+[2025-02-21 19:27:49 ViT-B/16] (tools.py 55): INFO output/humanedit/vitb16_2/ckpt_epoch_0.pth saving......
+[2025-02-21 19:28:07 ViT-B/16] (tools.py 57): INFO output/humanedit/vitb16_2/ckpt_epoch_0.pth saved !!!
+[2025-02-21 19:28:25 ViT-B/16] (tools.py 61): INFO output/humanedit/vitb16_2/best.pth saved !!!
+[2025-02-21 19:28:26 ViT-B/16] (main.py 183): INFO Train: [1/16][0/300]	eta 0:06:21 lr 0.000000399	time 1.2704 (1.2704)	tot_loss 3.2798 (3.2798)	mem 7114MB
+[2025-02-21 19:28:36 ViT-B/16] (main.py 183): INFO Train: [1/16][50/300]	eta 0:00:55 lr 0.000000465	time 0.1967 (0.2229)	tot_loss 3.7053 (3.7285)	mem 7115MB
+[2025-02-21 19:28:47 ViT-B/16] (main.py 183): INFO Train: [1/16][100/300]	eta 0:00:42 lr 0.000000532	time 0.1945 (0.2131)	tot_loss 3.7734 (3.7149)	mem 7115MB
+[2025-02-21 19:28:57 ViT-B/16] (main.py 183): INFO Train: [1/16][150/300]	eta 0:00:31 lr 0.000000599	time 0.1988 (0.2104)	tot_loss 3.6892 (3.6966)	mem 7115MB
+[2025-02-21 19:29:07 ViT-B/16] (main.py 183): INFO Train: [1/16][200/300]	eta 0:00:20 lr 0.000000665	time 0.1995 (0.2098)	tot_loss 3.7045 (3.6792)	mem 7115MB
+[2025-02-21 19:29:18 ViT-B/16] (main.py 183): INFO Train: [1/16][250/300]	eta 0:00:10 lr 0.000000732	time 0.2034 (0.2099)	tot_loss 3.7966 (3.6760)	mem 7115MB
+[2025-02-21 19:29:28 ViT-B/16] (main.py 190): INFO EPOCH 1 training takes 0:01:03
+[2025-02-21 19:29:29 ViT-B/16] (main.py 183): INFO Train: [2/16][0/300]	eta 0:06:13 lr 0.000000799	time 1.2459 (1.2459)	tot_loss 3.3296 (3.3296)	mem 7115MB
+[2025-02-21 19:29:40 ViT-B/16] (main.py 183): INFO Train: [2/16][50/300]	eta 0:00:57 lr 0.000000865	time 0.2064 (0.2315)	tot_loss 3.5891 (3.5832)	mem 7115MB
+[2025-02-21 19:29:51 ViT-B/16] (main.py 183): INFO Train: [2/16][100/300]	eta 0:00:44 lr 0.000000932	time 0.1968 (0.2218)	tot_loss 3.2741 (3.5308)	mem 7115MB
+[2025-02-21 19:30:01 ViT-B/16] (main.py 183): INFO Train: [2/16][150/300]	eta 0:00:32 lr 0.000000999	time 0.1953 (0.2175)	tot_loss 3.5388 (3.5372)	mem 7115MB
+[2025-02-21 19:30:11 ViT-B/16] (main.py 183): INFO Train: [2/16][200/300]	eta 0:00:21 lr 0.000001065	time 0.2029 (0.2157)	tot_loss 3.9254 (3.5462)	mem 7115MB
+[2025-02-21 19:30:22 ViT-B/16] (main.py 183): INFO Train: [2/16][250/300]	eta 0:00:10 lr 0.000001132	time 0.1968 (0.2140)	tot_loss 3.2737 (3.5404)	mem 7115MB
+[2025-02-21 19:30:32 ViT-B/16] (main.py 190): INFO EPOCH 2 training takes 0:01:03
+[2025-02-21 19:30:33 ViT-B/16] (main.py 183): INFO Train: [3/16][0/300]	eta 0:06:02 lr 0.000001199	time 1.2074 (1.2074)	tot_loss 3.6113 (3.6113)	mem 7115MB
+[2025-02-21 19:30:44 ViT-B/16] (main.py 183): INFO Train: [3/16][50/300]	eta 0:00:56 lr 0.000001265	time 0.1977 (0.2267)	tot_loss 3.5718 (3.4921)	mem 7115MB
+[2025-02-21 19:30:54 ViT-B/16] (main.py 183): INFO Train: [3/16][100/300]	eta 0:00:43 lr 0.000001332	time 0.1944 (0.2179)	tot_loss 3.6547 (3.4995)	mem 7115MB
+[2025-02-21 19:31:04 ViT-B/16] (main.py 183): INFO Train: [3/16][150/300]	eta 0:00:32 lr 0.000001399	time 0.1990 (0.2146)	tot_loss 3.7853 (3.5054)	mem 7115MB
+[2025-02-21 19:31:15 ViT-B/16] (main.py 183): INFO Train: [3/16][200/300]	eta 0:00:21 lr 0.000001465	time 0.1969 (0.2124)	tot_loss 3.9447 (3.5000)	mem 7115MB
+[2025-02-21 19:31:25 ViT-B/16] (main.py 183): INFO Train: [3/16][250/300]	eta 0:00:10 lr 0.000001532	time 0.2027 (0.2111)	tot_loss 3.5152 (3.4983)	mem 7115MB
+[2025-02-21 19:31:35 ViT-B/16] (main.py 190): INFO EPOCH 3 training takes 0:01:03
+[2025-02-21 19:31:37 ViT-B/16] (main.py 183): INFO Train: [4/16][0/300]	eta 0:06:16 lr 0.000001599	time 1.2536 (1.2536)	tot_loss 3.5219 (3.5219)	mem 7115MB
+[2025-02-21 19:31:47 ViT-B/16] (main.py 183): INFO Train: [4/16][50/300]	eta 0:00:57 lr 0.000001665	time 0.2016 (0.2308)	tot_loss 3.6739 (3.4088)	mem 7115MB
+[2025-02-21 19:31:57 ViT-B/16] (main.py 183): INFO Train: [4/16][100/300]	eta 0:00:43 lr 0.000001732	time 0.1978 (0.2197)	tot_loss 2.9772 (3.4097)	mem 7115MB
+[2025-02-21 19:32:08 ViT-B/16] (main.py 183): INFO Train: [4/16][150/300]	eta 0:00:32 lr 0.000001799	time 0.1990 (0.2154)	tot_loss 3.4354 (3.4218)	mem 7115MB
+[2025-02-21 19:32:18 ViT-B/16] (main.py 183): INFO Train: [4/16][200/300]	eta 0:00:21 lr 0.000001865	time 0.1944 (0.2133)	tot_loss 3.4919 (3.4198)	mem 7115MB
+[2025-02-21 19:32:28 ViT-B/16] (main.py 183): INFO Train: [4/16][250/300]	eta 0:00:10 lr 0.000001932	time 0.1986 (0.2117)	tot_loss 3.2459 (3.4215)	mem 7115MB
+[2025-02-21 19:32:39 ViT-B/16] (main.py 190): INFO EPOCH 4 training takes 0:01:03
+[2025-02-21 19:32:40 ViT-B/16] (main.py 183): INFO Train: [5/16][0/300]	eta 0:06:21 lr 0.000001999	time 1.2719 (1.2719)	tot_loss 3.2738 (3.2738)	mem 7115MB
+[2025-02-21 19:32:50 ViT-B/16] (main.py 183): INFO Train: [5/16][50/300]	eta 0:00:56 lr 0.000001533	time 0.1950 (0.2255)	tot_loss 2.8460 (3.4158)	mem 7115MB
+[2025-02-21 19:33:01 ViT-B/16] (main.py 183): INFO Train: [5/16][100/300]	eta 0:00:43 lr 0.000001506	time 0.2022 (0.2168)	tot_loss 3.6053 (3.3790)	mem 7115MB
+[2025-02-21 19:33:11 ViT-B/16] (main.py 183): INFO Train: [5/16][150/300]	eta 0:00:31 lr 0.000001477	time 0.1975 (0.2133)	tot_loss 3.8739 (3.3772)	mem 7115MB
+[2025-02-21 19:33:21 ViT-B/16] (main.py 183): INFO Train: [5/16][200/300]	eta 0:00:21 lr 0.000001448	time 0.1975 (0.2122)	tot_loss 3.2811 (3.3879)	mem 7115MB
+[2025-02-21 19:33:32 ViT-B/16] (main.py 183): INFO Train: [5/16][250/300]	eta 0:00:10 lr 0.000001419	time 0.2028 (0.2113)	tot_loss 3.0915 (3.3846)	mem 7115MB
+[2025-02-21 19:33:42 ViT-B/16] (main.py 190): INFO EPOCH 5 training takes 0:01:03
+[2025-02-21 19:33:42 ViT-B/16] (main.py 199): INFO 1 views inference
+[2025-02-21 19:33:43 ViT-B/16] (main.py 238): INFO Test: [0/564]	Acc@1: 0.000	
+[2025-02-21 19:33:44 ViT-B/16] (main.py 238): INFO Test: [50/564]	Acc@1: 5.882	
+[2025-02-21 19:33:44 ViT-B/16] (main.py 238): INFO Test: [100/564]	Acc@1: 7.921	
+[2025-02-21 19:33:45 ViT-B/16] (main.py 238): INFO Test: [150/564]	Acc@1: 8.609	
+[2025-02-21 19:33:45 ViT-B/16] (main.py 238): INFO Test: [200/564]	Acc@1: 7.463	
+[2025-02-21 19:33:46 ViT-B/16] (main.py 238): INFO Test: [250/564]	Acc@1: 8.367	
+[2025-02-21 19:33:46 ViT-B/16] (main.py 238): INFO Test: [300/564]	Acc@1: 8.306	
+[2025-02-21 19:33:47 ViT-B/16] (main.py 238): INFO Test: [350/564]	Acc@1: 8.120	
+[2025-02-21 19:33:48 ViT-B/16] (main.py 238): INFO Test: [400/564]	Acc@1: 8.728	
+[2025-02-21 19:33:48 ViT-B/16] (main.py 238): INFO Test: [450/564]	Acc@1: 8.869	
+[2025-02-21 19:33:49 ViT-B/16] (main.py 238): INFO Test: [500/564]	Acc@1: 8.782	
+[2025-02-21 19:33:49 ViT-B/16] (main.py 238): INFO Test: [550/564]	Acc@1: 9.074	
+[2025-02-21 19:33:49 ViT-B/16] (main.py 244): INFO  * Acc@1 9.043 Acc@5 23.316
+[2025-02-21 19:33:49 ViT-B/16] (main.py 110): INFO Accuracy of the network on the 1128 test videos: 9.0%
+[2025-02-21 19:33:49 ViT-B/16] (main.py 113): INFO Max accuracy: 9.04%
+[2025-02-21 19:33:49 ViT-B/16] (tools.py 55): INFO output/humanedit/vitb16_2/ckpt_epoch_5.pth saving......
+[2025-02-21 19:34:08 ViT-B/16] (tools.py 57): INFO output/humanedit/vitb16_2/ckpt_epoch_5.pth saved !!!
+[2025-02-21 19:34:26 ViT-B/16] (tools.py 61): INFO output/humanedit/vitb16_2/best.pth saved !!!
+[2025-02-21 19:34:27 ViT-B/16] (main.py 183): INFO Train: [6/16][0/300]	eta 0:06:21 lr 0.000001389	time 1.2701 (1.2701)	tot_loss 3.3153 (3.3153)	mem 7115MB
+[2025-02-21 19:34:37 ViT-B/16] (main.py 183): INFO Train: [6/16][50/300]	eta 0:00:55 lr 0.000001359	time 0.1967 (0.2231)	tot_loss 2.8047 (3.3031)	mem 7115MB
+[2025-02-21 19:34:47 ViT-B/16] (main.py 183): INFO Train: [6/16][100/300]	eta 0:00:42 lr 0.000001329	time 0.1993 (0.2142)	tot_loss 3.2290 (3.3100)	mem 7116MB
+[2025-02-21 19:34:58 ViT-B/16] (main.py 183): INFO Train: [6/16][150/300]	eta 0:00:31 lr 0.000001298	time 0.1958 (0.2113)	tot_loss 3.6655 (3.3323)	mem 7116MB
+[2025-02-21 19:35:08 ViT-B/16] (main.py 183): INFO Train: [6/16][200/300]	eta 0:00:20 lr 0.000001267	time 0.1967 (0.2098)	tot_loss 3.3218 (3.3272)	mem 7116MB
+[2025-02-21 19:35:18 ViT-B/16] (main.py 183): INFO Train: [6/16][250/300]	eta 0:00:10 lr 0.000001235	time 0.1948 (0.2095)	tot_loss 3.0482 (3.3283)	mem 7116MB
+[2025-02-21 19:35:28 ViT-B/16] (main.py 190): INFO EPOCH 6 training takes 0:01:02
+[2025-02-21 19:35:30 ViT-B/16] (main.py 183): INFO Train: [7/16][0/300]	eta 0:06:13 lr 0.000001204	time 1.2449 (1.2449)	tot_loss 3.1551 (3.1551)	mem 7116MB
+[2025-02-21 19:35:40 ViT-B/16] (main.py 183): INFO Train: [7/16][50/300]	eta 0:00:56 lr 0.000001172	time 0.2025 (0.2260)	tot_loss 3.3828 (3.2812)	mem 7116MB
+[2025-02-21 19:35:50 ViT-B/16] (main.py 183): INFO Train: [7/16][100/300]	eta 0:00:43 lr 0.000001140	time 0.1984 (0.2175)	tot_loss 3.3538 (3.2529)	mem 7116MB
+[2025-02-21 19:36:01 ViT-B/16] (main.py 183): INFO Train: [7/16][150/300]	eta 0:00:32 lr 0.000001108	time 0.2029 (0.2143)	tot_loss 3.4768 (3.2802)	mem 7116MB
+[2025-02-21 19:36:11 ViT-B/16] (main.py 183): INFO Train: [7/16][200/300]	eta 0:00:21 lr 0.000001075	time 0.2026 (0.2124)	tot_loss 3.1155 (3.2811)	mem 7116MB
+[2025-02-21 19:36:22 ViT-B/16] (main.py 183): INFO Train: [7/16][250/300]	eta 0:00:10 lr 0.000001043	time 0.1942 (0.2116)	tot_loss 2.9838 (3.2803)	mem 7116MB
+[2025-02-21 19:36:32 ViT-B/16] (main.py 190): INFO EPOCH 7 training takes 0:01:03
+[2025-02-21 19:36:33 ViT-B/16] (main.py 183): INFO Train: [8/16][0/300]	eta 0:06:14 lr 0.000001011	time 1.2475 (1.2475)	tot_loss 3.5155 (3.5155)	mem 7116MB
+[2025-02-21 19:36:44 ViT-B/16] (main.py 183): INFO Train: [8/16][50/300]	eta 0:00:57 lr 0.000000978	time 0.2023 (0.2282)	tot_loss 3.4165 (3.2791)	mem 7116MB
+[2025-02-21 19:36:54 ViT-B/16] (main.py 183): INFO Train: [8/16][100/300]	eta 0:00:43 lr 0.000000946	time 0.2026 (0.2190)	tot_loss 3.5039 (3.2526)	mem 7116MB
+[2025-02-21 19:37:04 ViT-B/16] (main.py 183): INFO Train: [8/16][150/300]	eta 0:00:32 lr 0.000000914	time 0.2084 (0.2155)	tot_loss 3.3575 (3.2503)	mem 7116MB
+[2025-02-21 19:37:15 ViT-B/16] (main.py 183): INFO Train: [8/16][200/300]	eta 0:00:21 lr 0.000000881	time 0.2033 (0.2134)	tot_loss 2.6771 (3.2551)	mem 7116MB
+[2025-02-21 19:37:25 ViT-B/16] (main.py 183): INFO Train: [8/16][250/300]	eta 0:00:10 lr 0.000000849	time 0.2026 (0.2127)	tot_loss 2.8586 (3.2554)	mem 7116MB
+[2025-02-21 19:37:36 ViT-B/16] (main.py 190): INFO EPOCH 8 training takes 0:01:03
+[2025-02-21 19:37:37 ViT-B/16] (main.py 183): INFO Train: [9/16][0/300]	eta 0:06:09 lr 0.000000817	time 1.2311 (1.2311)	tot_loss 3.0500 (3.0500)	mem 7116MB
+[2025-02-21 19:37:47 ViT-B/16] (main.py 183): INFO Train: [9/16][50/300]	eta 0:00:56 lr 0.000000786	time 0.1983 (0.2260)	tot_loss 3.7270 (3.3310)	mem 7116MB
+[2025-02-21 19:37:58 ViT-B/16] (main.py 183): INFO Train: [9/16][100/300]	eta 0:00:43 lr 0.000000754	time 0.2012 (0.2175)	tot_loss 2.9627 (3.2997)	mem 7116MB
+[2025-02-21 19:38:08 ViT-B/16] (main.py 183): INFO Train: [9/16][150/300]	eta 0:00:32 lr 0.000000723	time 0.1966 (0.2147)	tot_loss 3.6021 (3.2614)	mem 7116MB
+[2025-02-21 19:38:18 ViT-B/16] (main.py 183): INFO Train: [9/16][200/300]	eta 0:00:21 lr 0.000000692	time 0.1972 (0.2132)	tot_loss 3.5555 (3.2661)	mem 7116MB
+[2025-02-21 19:38:29 ViT-B/16] (main.py 183): INFO Train: [9/16][250/300]	eta 0:00:10 lr 0.000000662	time 0.1991 (0.2124)	tot_loss 3.7892 (3.2657)	mem 7116MB
+[2025-02-21 19:38:39 ViT-B/16] (main.py 190): INFO EPOCH 9 training takes 0:01:03
+[2025-02-21 19:38:41 ViT-B/16] (main.py 183): INFO Train: [10/16][0/300]	eta 0:06:23 lr 0.000000632	time 1.2796 (1.2796)	tot_loss 3.3396 (3.3396)	mem 7116MB
+[2025-02-21 19:38:51 ViT-B/16] (main.py 183): INFO Train: [10/16][50/300]	eta 0:00:56 lr 0.000000602	time 0.1970 (0.2264)	tot_loss 3.5189 (3.2198)	mem 7116MB
+[2025-02-21 19:39:01 ViT-B/16] (main.py 183): INFO Train: [10/16][100/300]	eta 0:00:43 lr 0.000000573	time 0.2033 (0.2173)	tot_loss 3.4364 (3.2007)	mem 7116MB
+[2025-02-21 19:39:12 ViT-B/16] (main.py 183): INFO Train: [10/16][150/300]	eta 0:00:32 lr 0.000000544	time 0.2032 (0.2147)	tot_loss 3.2330 (3.2083)	mem 7116MB
+[2025-02-21 19:39:22 ViT-B/16] (main.py 183): INFO Train: [10/16][200/300]	eta 0:00:21 lr 0.000000516	time 0.1952 (0.2135)	tot_loss 3.0058 (3.2146)	mem 7116MB
+[2025-02-21 19:39:33 ViT-B/16] (main.py 183): INFO Train: [10/16][250/300]	eta 0:00:10 lr 0.000000488	time 0.1942 (0.2125)	tot_loss 3.3282 (3.2175)	mem 7116MB
+[2025-02-21 19:39:43 ViT-B/16] (main.py 190): INFO EPOCH 10 training takes 0:01:03
+[2025-02-21 19:39:43 ViT-B/16] (main.py 199): INFO 1 views inference
+[2025-02-21 19:39:44 ViT-B/16] (main.py 238): INFO Test: [0/564]	Acc@1: 0.000	
+[2025-02-21 19:39:44 ViT-B/16] (main.py 238): INFO Test: [50/564]	Acc@1: 6.863	
+[2025-02-21 19:39:45 ViT-B/16] (main.py 238): INFO Test: [100/564]	Acc@1: 7.426	
+[2025-02-21 19:39:45 ViT-B/16] (main.py 238): INFO Test: [150/564]	Acc@1: 8.278	
+[2025-02-21 19:39:46 ViT-B/16] (main.py 238): INFO Test: [200/564]	Acc@1: 8.706	
+[2025-02-21 19:39:46 ViT-B/16] (main.py 238): INFO Test: [250/564]	Acc@1: 9.363	
+[2025-02-21 19:39:47 ViT-B/16] (main.py 238): INFO Test: [300/564]	Acc@1: 8.970	
+[2025-02-21 19:39:48 ViT-B/16] (main.py 238): INFO Test: [350/564]	Acc@1: 8.405	
+[2025-02-21 19:39:48 ViT-B/16] (main.py 238): INFO Test: [400/564]	Acc@1: 8.229	
+[2025-02-21 19:39:49 ViT-B/16] (main.py 238): INFO Test: [450/564]	Acc@1: 8.315	
+[2025-02-21 19:39:49 ViT-B/16] (main.py 238): INFO Test: [500/564]	Acc@1: 8.583	
+[2025-02-21 19:39:50 ViT-B/16] (main.py 238): INFO Test: [550/564]	Acc@1: 8.984	
+[2025-02-21 19:39:50 ViT-B/16] (main.py 244): INFO  * Acc@1 8.954 Acc@5 25.443
+[2025-02-21 19:39:50 ViT-B/16] (main.py 110): INFO Accuracy of the network on the 1128 test videos: 9.0%
+[2025-02-21 19:39:50 ViT-B/16] (main.py 113): INFO Max accuracy: 9.04%
+[2025-02-21 19:39:50 ViT-B/16] (tools.py 55): INFO output/humanedit/vitb16_2/ckpt_epoch_10.pth saving......
+[2025-02-21 19:40:08 ViT-B/16] (tools.py 57): INFO output/humanedit/vitb16_2/ckpt_epoch_10.pth saved !!!
+[2025-02-21 19:40:09 ViT-B/16] (main.py 183): INFO Train: [11/16][0/300]	eta 0:06:15 lr 0.000000461	time 1.2501 (1.2501)	tot_loss 2.6573 (2.6573)	mem 7116MB
+[2025-02-21 19:40:19 ViT-B/16] (main.py 183): INFO Train: [11/16][50/300]	eta 0:00:56 lr 0.000000434	time 0.1975 (0.2242)	tot_loss 2.7769 (3.2101)	mem 7116MB
+[2025-02-21 19:40:30 ViT-B/16] (main.py 183): INFO Train: [11/16][100/300]	eta 0:00:43 lr 0.000000408	time 0.1966 (0.2150)	tot_loss 2.6384 (3.2382)	mem 7116MB
+[2025-02-21 19:40:40 ViT-B/16] (main.py 183): INFO Train: [11/16][150/300]	eta 0:00:31 lr 0.000000382	time 0.2044 (0.2123)	tot_loss 3.3062 (3.2242)	mem 7116MB
+[2025-02-21 19:40:51 ViT-B/16] (main.py 183): INFO Train: [11/16][200/300]	eta 0:00:21 lr 0.000000358	time 0.1978 (0.2121)	tot_loss 3.3084 (3.2171)	mem 7116MB
+[2025-02-21 19:41:01 ViT-B/16] (main.py 183): INFO Train: [11/16][250/300]	eta 0:00:10 lr 0.000000334	time 0.2074 (0.2125)	tot_loss 3.5009 (3.2200)	mem 7116MB
+[2025-02-21 19:41:12 ViT-B/16] (main.py 190): INFO EPOCH 11 training takes 0:01:03
+[2025-02-21 19:41:13 ViT-B/16] (main.py 183): INFO Train: [12/16][0/300]	eta 0:06:23 lr 0.000000310	time 1.2773 (1.2773)	tot_loss 3.0529 (3.0529)	mem 7116MB
+[2025-02-21 19:41:23 ViT-B/16] (main.py 183): INFO Train: [12/16][50/300]	eta 0:00:56 lr 0.000000288	time 0.2005 (0.2264)	tot_loss 3.5682 (3.2488)	mem 7116MB
+[2025-02-21 19:41:34 ViT-B/16] (main.py 183): INFO Train: [12/16][100/300]	eta 0:00:43 lr 0.000000266	time 0.1971 (0.2177)	tot_loss 2.8501 (3.2324)	mem 7116MB
+[2025-02-21 19:41:44 ViT-B/16] (main.py 183): INFO Train: [12/16][150/300]	eta 0:00:32 lr 0.000000245	time 0.1978 (0.2147)	tot_loss 2.9645 (3.2173)	mem 7116MB
+[2025-02-21 19:41:55 ViT-B/16] (main.py 183): INFO Train: [12/16][200/300]	eta 0:00:21 lr 0.000000225	time 0.2052 (0.2124)	tot_loss 3.3890 (3.2249)	mem 7116MB
+[2025-02-21 19:42:05 ViT-B/16] (main.py 183): INFO Train: [12/16][250/300]	eta 0:00:10 lr 0.000000206	time 0.1977 (0.2116)	tot_loss 3.0148 (3.2026)	mem 7116MB
+[2025-02-21 19:42:15 ViT-B/16] (main.py 190): INFO EPOCH 12 training takes 0:01:03
+[2025-02-21 19:42:17 ViT-B/16] (main.py 183): INFO Train: [13/16][0/300]	eta 0:06:15 lr 0.000000187	time 1.2525 (1.2525)	tot_loss 3.2330 (3.2330)	mem 7116MB
+[2025-02-21 19:42:27 ViT-B/16] (main.py 183): INFO Train: [13/16][50/300]	eta 0:00:56 lr 0.000000170	time 0.1986 (0.2259)	tot_loss 3.0760 (3.1319)	mem 7116MB
+[2025-02-21 19:42:37 ViT-B/16] (main.py 183): INFO Train: [13/16][100/300]	eta 0:00:43 lr 0.000000153	time 0.1988 (0.2175)	tot_loss 2.5383 (3.1462)	mem 7116MB
+[2025-02-21 19:42:48 ViT-B/16] (main.py 183): INFO Train: [13/16][150/300]	eta 0:00:32 lr 0.000000137	time 0.1983 (0.2134)	tot_loss 3.0461 (3.1684)	mem 7116MB
+[2025-02-21 19:42:58 ViT-B/16] (main.py 183): INFO Train: [13/16][200/300]	eta 0:00:21 lr 0.000000122	time 0.1945 (0.2123)	tot_loss 3.3012 (3.1590)	mem 7116MB
+[2025-02-21 19:43:08 ViT-B/16] (main.py 183): INFO Train: [13/16][250/300]	eta 0:00:10 lr 0.000000109	time 0.1993 (0.2115)	tot_loss 3.2018 (3.1740)	mem 7116MB
+[2025-02-21 19:43:19 ViT-B/16] (main.py 190): INFO EPOCH 13 training takes 0:01:03
+[2025-02-21 19:43:20 ViT-B/16] (main.py 183): INFO Train: [14/16][0/300]	eta 0:06:12 lr 0.000000096	time 1.2430 (1.2430)	tot_loss 3.7603 (3.7603)	mem 7116MB
+[2025-02-21 19:43:30 ViT-B/16] (main.py 183): INFO Train: [14/16][50/300]	eta 0:00:56 lr 0.000000084	time 0.1961 (0.2261)	tot_loss 3.4386 (3.2011)	mem 7116MB
+[2025-02-21 19:43:40 ViT-B/16] (main.py 183): INFO Train: [14/16][100/300]	eta 0:00:43 lr 0.000000073	time 0.1945 (0.2156)	tot_loss 3.0549 (3.1797)	mem 7116MB
+[2025-02-21 19:43:51 ViT-B/16] (main.py 183): INFO Train: [14/16][150/300]	eta 0:00:31 lr 0.000000063	time 0.1992 (0.2131)	tot_loss 3.2190 (3.1835)	mem 7116MB
+[2025-02-21 19:44:01 ViT-B/16] (main.py 183): INFO Train: [14/16][200/300]	eta 0:00:21 lr 0.000000054	time 0.1942 (0.2112)	tot_loss 3.0516 (3.2102)	mem 7116MB
+[2025-02-21 19:44:11 ViT-B/16] (main.py 183): INFO Train: [14/16][250/300]	eta 0:00:10 lr 0.000000046	time 0.1972 (0.2100)	tot_loss 3.0231 (3.2002)	mem 7116MB
+[2025-02-21 19:44:22 ViT-B/16] (main.py 190): INFO EPOCH 14 training takes 0:01:03
+[2025-02-21 19:44:23 ViT-B/16] (main.py 183): INFO Train: [15/16][0/300]	eta 0:06:10 lr 0.000000039	time 1.2339 (1.2339)	tot_loss 2.7433 (2.7433)	mem 7116MB
+[2025-02-21 19:44:33 ViT-B/16] (main.py 183): INFO Train: [15/16][50/300]	eta 0:00:57 lr 0.000000033	time 0.2077 (0.2297)	tot_loss 3.2137 (3.2132)	mem 7116MB
+[2025-02-21 19:44:44 ViT-B/16] (main.py 183): INFO Train: [15/16][100/300]	eta 0:00:43 lr 0.000000029	time 0.1987 (0.2196)	tot_loss 3.1070 (3.2050)	mem 7116MB
+[2025-02-21 19:44:54 ViT-B/16] (main.py 183): INFO Train: [15/16][150/300]	eta 0:00:32 lr 0.000000025	time 0.1957 (0.2147)	tot_loss 3.1556 (3.1870)	mem 7116MB
+[2025-02-21 19:45:05 ViT-B/16] (main.py 183): INFO Train: [15/16][200/300]	eta 0:00:21 lr 0.000000022	time 0.1954 (0.2133)	tot_loss 3.1402 (3.1851)	mem 7116MB
+[2025-02-21 19:45:15 ViT-B/16] (main.py 183): INFO Train: [15/16][250/300]	eta 0:00:10 lr 0.000000021	time 0.2003 (0.2124)	tot_loss 3.6697 (3.1964)	mem 7116MB
+[2025-02-21 19:45:25 ViT-B/16] (main.py 190): INFO EPOCH 15 training takes 0:01:03
+[2025-02-21 19:45:25 ViT-B/16] (main.py 199): INFO 1 views inference
+[2025-02-21 19:45:26 ViT-B/16] (main.py 238): INFO Test: [0/564]	Acc@1: 0.000	
+[2025-02-21 19:45:27 ViT-B/16] (main.py 238): INFO Test: [50/564]	Acc@1: 8.824	
+[2025-02-21 19:45:27 ViT-B/16] (main.py 238): INFO Test: [100/564]	Acc@1: 7.921	
+[2025-02-21 19:45:28 ViT-B/16] (main.py 238): INFO Test: [150/564]	Acc@1: 7.616	
+[2025-02-21 19:45:29 ViT-B/16] (main.py 238): INFO Test: [200/564]	Acc@1: 7.960	
+[2025-02-21 19:45:29 ViT-B/16] (main.py 238): INFO Test: [250/564]	Acc@1: 7.968	
+[2025-02-21 19:45:30 ViT-B/16] (main.py 238): INFO Test: [300/564]	Acc@1: 8.804	
+[2025-02-21 19:45:30 ViT-B/16] (main.py 238): INFO Test: [350/564]	Acc@1: 9.544	
+[2025-02-21 19:45:31 ViT-B/16] (main.py 238): INFO Test: [400/564]	Acc@1: 8.978	
+[2025-02-21 19:45:31 ViT-B/16] (main.py 238): INFO Test: [450/564]	Acc@1: 8.980	
+[2025-02-21 19:45:32 ViT-B/16] (main.py 238): INFO Test: [500/564]	Acc@1: 8.483	
+[2025-02-21 19:45:32 ViT-B/16] (main.py 238): INFO Test: [550/564]	Acc@1: 8.984	
+[2025-02-21 19:45:33 ViT-B/16] (main.py 244): INFO  * Acc@1 8.865 Acc@5 25.443
+[2025-02-21 19:45:33 ViT-B/16] (main.py 110): INFO Accuracy of the network on the 1128 test videos: 8.9%
+[2025-02-21 19:45:33 ViT-B/16] (main.py 113): INFO Max accuracy: 9.04%
+[2025-02-21 19:45:33 ViT-B/16] (tools.py 55): INFO output/humanedit/vitb16_2/ckpt_epoch_15.pth saving......
+[2025-02-21 19:45:51 ViT-B/16] (tools.py 57): INFO output/humanedit/vitb16_2/ckpt_epoch_15.pth saved !!!

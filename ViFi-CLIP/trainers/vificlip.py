@@ -105,6 +105,9 @@ class VLPromptLearner(nn.Module):
 
             tokenized_prompts = torch.cat([clip.tokenize(p) for p in prompts])  # (n_cls, n_tkn)
             with torch.no_grad():
+                # adjusted, to gpu
+                device = clip_model.token_embedding.weight.device
+                tokenized_prompts = tokenized_prompts.to(device)
                 embedding = clip_model.token_embedding(tokenized_prompts).type(dtype)
 
             # These token vectors will be saved when in save_model(),
@@ -120,6 +123,10 @@ class VLPromptLearner(nn.Module):
             prompt_prefix = ctx_init
             prompts = [prompt_prefix + " " + name + "." for name in classnames]
             tokenized_prompts = torch.cat([clip.tokenize(p) for p in prompts])  # (n_cls, n_tkn)
+            
+            device = clip_model.token_embedding.weight.device  
+            tokenized_prompts = tokenized_prompts.to(device)
+            
             with torch.no_grad():
                 embedding = clip_model.token_embedding(tokenized_prompts).type(dtype)
             self.register_buffer("complete_text_embeddings", embedding)
@@ -134,6 +141,11 @@ class VLPromptLearner(nn.Module):
         if label is not None:
             prefix = prefix[label]
             suffix = suffix[label]
+
+        # new, move to gpu
+        device = prefix.device  # oder suffix.device, wenn sicher ist, dass sie gleich sind
+        ctx = ctx.to(device)
+        suffix = suffix.to(device)
 
         prompts = torch.cat(
             [
@@ -161,20 +173,36 @@ class VLPromptLearner(nn.Module):
         return prompts
 
 
+"""
+ViFi-CLIP class has been updated to handle individual instructions rather than predefined classes. Originally, the classes were tokenized once when initializing the model, and the tokens were used for every video input to compute the predicted class. Now, the model processes individual instructions instead of class predictions. The following modifications have been made:
+
+- Initializing ViFiCLIP with class names is optional. If class names are provided, the model prepares for a training scenario where the classes remain fixed. This approach allows the text features to be computed once and cached, resulting in reduced computational overhead.
+
+- If the model is initialized without class names and an instruction is provided during the forward pass, the instruction is tokenized on the fly. In this case, no cached features are used.
+"""
+
 class ViFiCLIP(nn.Module):
     def __init__(self, cfg, classnames, clip_model, logger):
         super().__init__()
-        self.prompt_learner = VLPromptLearner(cfg, classnames, clip_model, logger)
-        self.tokenized_prompts = self.prompt_learner.tokenized_prompts
+        self.cfg = cfg
+        self.clip_model = clip_model
+        self.logger = logger
+        if classnames:
+            self.prompt_learner = VLPromptLearner(cfg, classnames, clip_model, logger)
+            self.tokenized_prompts = self.prompt_learner.tokenized_prompts
         self.image_encoder = clip_model.visual
         self.text_encoder = TextEncoder(clip_model)
         self.logit_scale = clip_model.logit_scale
         self.dtype = clip_model.dtype
-    def forward(self, image):
+    def forward(self, image, instruction=None):
+        if instruction:
+            self.prompt_learner = VLPromptLearner(self.cfg, instruction, self.clip_model, self.logger)
+            self.tokenized_prompts = self.prompt_learner.tokenized_prompts
+        
         tokenized_prompts = self.tokenized_prompts
         logit_scale = self.logit_scale.exp()
         prompts = self.prompt_learner()
-
+      
         # b = image.shape[0]
         # Lets encode the video into required format
         b, t, c, h, w = image.size()
@@ -190,7 +218,8 @@ class ViFiCLIP(nn.Module):
         # Finally, make the text features
         # text_features = self.text_encoder(prompts, tokenized_prompts)
         
-        if not hasattr(self, 'cached_text_features'):
+        # if NOT cached, or instruction given (=inference -> text changes)
+        if not hasattr(self, 'cached_text_features') or instruction:
             batch_size = 400
             num_batches = (prompts.size(0) + batch_size - 1) // batch_size 
             text_features_list = []
@@ -200,16 +229,20 @@ class ViFiCLIP(nn.Module):
                 with torch.no_grad():
                     batch_features = self.text_encoder(batch_prompts, batch_tokenized_prompts)
                 text_features_list.append(batch_features)
-            self.cached_text_features = torch.cat(text_features_list, dim=0)
-
-        text_features = self.cached_text_features
-
+                    if not instruction:
+                        self.cached_text_features = torch.cat(text_features_list, dim=0)
+        # if no instruction is given = training -> cached text can be used
+        if not instruction:
+            text_features = self.cached_text_features
+        else:
+            text_features = torch.cat(text_features_list, dim=0)
 
         image_features = image_features / image_features.norm(dim=-1, keepdim=True)
         text_features = text_features / text_features.norm(dim=-1, keepdim=True)
         logits = logit_scale * image_features @ text_features.t()
 
         return logits
+
 
 
 def returnCLIP(config, logger=None,

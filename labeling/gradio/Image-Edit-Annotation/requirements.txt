@@ -1,0 +1,5 @@
+gradio==4.44.1
+pymongo==4.8.0
+requests==2.32.3
+python-dotenv==1.0.1
+pillow==10.4.0

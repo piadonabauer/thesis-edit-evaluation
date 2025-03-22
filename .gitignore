@@ -10,3 +10,12 @@
 **/env/
 experiments/env/
 open_clip/env/
+
+apex/
+apex
+
+env
+env/
+
+.ipynb_checkpoints
+/.ipynb_checkpoints

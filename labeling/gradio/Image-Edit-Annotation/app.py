@@ -6,6 +6,7 @@ import requests
 from io import BytesIO
 from dotenv import load_dotenv
 
+# explanation of the intents, instructions, data, and process of the labeling study
 instruction_beginning = """
 ## 🔍 Evaluation of AI Quality
 
@@ -41,8 +42,10 @@ overall_info = """
 How do you perceive and like the edit as a whole, how well does it meet your expectations and complements the original image?
 """
 
+
 # load_dotenv()
 
+# retrieve credentials for accessing the MongoDB database
 mongo_user = os.getenv('MONGO_USER')
 mongo_password = os.getenv('MONGO_PASSWORD')
 cluster_url = os.getenv('MONGO_CLUSTER_URL')

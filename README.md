@@ -4,7 +4,9 @@ This repository contains the implementation of the thesis **"Learning Temporal R
 
 ## Overview
 
-<img src="https://github.com/piadonabauer/thesis-edit-evaluation/blob/main/data/examples/thesis_images/overview.png?raw=true" alt="Pipeline" width="500"/>
+<p align="center">
+    <img src="https://github.com/piadonabauer/thesis-edit-evaluation/blob/main/data/examples/thesis_images/overview.png?raw=true" alt="Pipeline" width="300"/>
+</p>
 
 ### **Abstract**
 *Image editing tools are becoming increasingly popular for creative and professional workflows. While users can manually edit images, AI-based tools now allow text-based instructions to guide image edits, often generating multiple variations for users to select from. However, evaluating instruction-guided image editing remains a challenge due to the lack of established frameworks. Traditional automated metrics focus on overall image quality rather than execution fidelity, often failing to align with human judgment. This thesis proposes a novel evaluation approach that leverages spatio-temporal relationships from video understanding to analyze changes between edited image pairs and their corresponding instructions. A key component is a human annotation study, which aligns the evaluation metric with human perception. While experimental results indicate moderate retrieval performance, the method struggles with fine-grained distinctions. Correlation with human ratings is low overall but improves significantly for well-defined edits, specific editing types, and high-quality training data. These findings highlight the potential of this approach in structured scenarios while emphasizing its limitations as a universal evaluation metric. This research aims to lay the groundwork for a systematic, human-centered evaluation framework for image editing, fostering further discussion and innovation in the field.*
@@ -31,16 +33,17 @@ Follow the official ViFi-CLIP installation guide:
 
 The guide describes executing the following commands:
 
-    ```bash
+```bash
 cd ViFi-CLIP
 python3 -m venv .env
 source .env/bin/activate
 pip install -r requirements.txt
 ```
 
+
 Also, install Apex:
 
-    ```bash
+```bash
 git clone https://github.com/NVIDIA/apex
 cd apex
 pip install -v --disable-pip-version-check --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
@@ -48,7 +51,7 @@ pip install -v --disable-pip-version-check --no-cache-dir --global-option="--cpp
 
 #### **(2) Setup for Data Analysis**
 
-    ```bash
+```bash
 cd labeling
 python3 -m venv .env
 source .env/bin/activate
@@ -66,7 +69,7 @@ Three APIs are accessed in this repository:
 
 Credentials need to be stored in a .env file for secure access. Create a .env file in the top directory with the following content:
 
-    ```bash
+```bash
 MONGO_USER`x
 MONGO_PASSWORD=x
 MONGO_CLUSTER_URL=x
@@ -76,7 +79,6 @@ GRADIO_PASSWORD=x
 
 OPENAI_API_KEY=x
 ```
-
 
 ### **Datasets**
 
@@ -107,7 +109,7 @@ To reproduce a model (e.g., ViT-B/16, 2 frames, trained on HumanEdit, fold 1):
 
 3. Run the training command:
 
-    ```bash
+```bash
 cd ViFi-CLIP
 python -m torch.distributed.run --nproc_per_node=1 main.py \
 -cfg output/crossvalidation/vitb16_2_humanedit_freeze_none/fold1/16_32_vifi_clip_all_shot.yaml \

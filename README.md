@@ -120,13 +120,13 @@ For more details, refer to the official ViFi-CLIP [Training Guide](https://githu
 ### `/data`
 Contains resources related to the HumanEdit and MagicBrush datasets, including:
 - Instructions for dataset preparation (`preprocessing.ipyn`)
-- Notebook for data visualization(`visualization.ipyn`)
-- Text files for fine-tuning (images/video clips are not included)
+- Notebook for data visualization (`visualization.ipyn`)
+- Text files for fine-tuning (video clips are not included)
 
 
 ### `/experiments`
 Contains additional analyses, not directly related to ViFi-CLIP, including:
-- Analysis of VIEScore's ratings of MagicBrush validation split (`/experiment/viescore`)
+- Analysis of VIEScore's ratings of MagicBrush validation split (`/experiments/viescore`)
 - Computation of automated metrics for MagicBrush's validation split (`metrics.ipyn`)
 - GPT-based ratings for MagicBrush (`gpt.ipynb`)
 - Correlation analysis between automated metrics and human annotations (`correlation.ipynb`)
@@ -136,7 +136,7 @@ Contains additional analyses, not directly related to ViFi-CLIP, including:
 Contains all labeling-related components, divided into:
 
 #### Gradio Interface (`/labeling/gradio/`)
-- Main gradio demo in `/labeling/gradio/Image-Edit-Annotation`: [Hugging Face Demo](https://huggingface.co/spaces/piadonabauer/Image-Edit-Annotation) ![Demo](https://img.shields.io/badge/demo-live-blue)
+- Main gradio demo in `/labeling/gradio/Image-Edit-Annotation`: [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/piadonabauer/Image-Edit-Annotation)
 - MongoDB setup (`setup_db.ipynb`)
 - Data retrieval of MongoDB (`data_retrieval_db.ipynb`)
 
@@ -153,7 +153,6 @@ Used for:
 - Performing inference: computing similarity scores between an image edit & instruction (`inference.ipynb`)
 
 
-    
 ## Acknowledgements
 
 The code for model fine-tuning is based on [ViFi-CLIP](https://github.com/muzairkhattak/ViFi-CLIP)'s repository. 
